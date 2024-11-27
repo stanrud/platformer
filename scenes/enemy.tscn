@@ -1,8 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://dtpmxwc88c5kl"]
+[gd_scene load_steps=13 format=3 uid="uid://dtpmxwc88c5kl"]
 
 [ext_resource type="Script" path="res://scripts/enemy.gd" id="1_4lbq6"]
 [ext_resource type="Texture2D" uid="uid://bixqpmueap416" path="res://assets/sprites/slime_green.png" id="1_nio26"]
-[ext_resource type="PackedScene" uid="uid://5sdhdj70vu8x" path="res://scenes/killzone.tscn" id="3_lvpth"]
+[ext_resource type="AudioStream" uid="uid://kqy4kan2pjb8" path="res://assets/sounds/hurt.wav" id="3_nw0tr"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n2x1g"]
 atlas = ExtResource("1_nio26")
@@ -40,27 +40,141 @@ animations = [{
 "speed": 10.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_5scdg"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mkpr4"]
 size = Vector2(12, 12)
+
+[sub_resource type="Animation" id="Animation_fmkld"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, -12)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("KillSound:playing")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_knvcl"]
+resource_name = "kill-slime"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, -1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 0.0833333)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("KillSound:playing")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"queue_free"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_qm1hv"]
+_data = {
+"RESET": SubResource("Animation_fmkld"),
+"kill-slime": SubResource("Animation_knvcl")
+}
 
 [node name="Slime" type="Node2D"]
 script = ExtResource("1_4lbq6")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -12)
 sprite_frames = SubResource("SpriteFrames_207af")
 autoplay = "default"
 frame_progress = 0.60275
 
-[node name="Killzone" parent="AnimatedSprite2D" instance=ExtResource("3_lvpth")]
+[node name="Area2D" type="Area2D" parent="AnimatedSprite2D"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AnimatedSprite2D/Killzone"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AnimatedSprite2D/Area2D"]
 position = Vector2(0, 6)
-shape = SubResource("RectangleShape2D_5scdg")
+shape = SubResource("RectangleShape2D_mkpr4")
+disabled = true
 
-[node name="RayCastRight" type="RayCast2D" parent="AnimatedSprite2D"]
+[node name="RayCastTop" type="RayCast2D" parent="AnimatedSprite2D/Area2D"]
 position = Vector2(0, 6)
-target_position = Vector2(7, 0)
+target_position = Vector2(0, -7)
+collision_mask = 2
 
-[node name="RayCastLeft" type="RayCast2D" parent="AnimatedSprite2D"]
+[node name="RayCastLeft" type="RayCast2D" parent="AnimatedSprite2D/Area2D"]
 position = Vector2(0, 6)
 target_position = Vector2(-7, 0)
+
+[node name="RayCastRight" type="RayCast2D" parent="AnimatedSprite2D/Area2D"]
+position = Vector2(0, 6)
+target_position = Vector2(7, 0)
+collision_mask = 3
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_qm1hv")
+}
+
+[node name="KillSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_nw0tr")
