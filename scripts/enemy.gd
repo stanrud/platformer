@@ -15,9 +15,9 @@ func _process(delta):
 	position.x += direction * SPEED * delta
 
 	if ray_cast_right.is_colliding():
-		var colision = ray_cast_right.get_collider()
-		if (colision.get_name() == 'Player'):
-			print("-1 health")
+		var collider = ray_cast_right.get_collider()
+		if (collider.get_name() == 'Player'):
+			collider.reduce_health(1)  # Call the method on the player
 		else:
 			direction = -1
 			animated_sprite.flip_h = true

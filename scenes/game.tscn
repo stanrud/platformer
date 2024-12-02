@@ -1,5 +1,6 @@
-[gd_scene load_steps=18 format=3 uid="uid://mn6bedwqard0"]
+[gd_scene load_steps=20 format=3 uid="uid://mn6bedwqard0"]
 
+[ext_resource type="Script" path="res://scenes/camera.gd" id="1_40tog"]
 [ext_resource type="PackedScene" uid="uid://b0kj8h8e0uyou" path="res://scenes/player.tscn" id="1_adcch"]
 [ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_n23jo"]
 [ext_resource type="Texture2D" uid="uid://ublve1fck4u1" path="res://assets/sprites/world_tileset.png" id="2_unj8r"]
@@ -8,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://5sdhdj70vu8x" path="res://scenes/killzone.tscn" id="5_s84g6"]
 [ext_resource type="PackedScene" uid="uid://dtpmxwc88c5kl" path="res://scenes/enemy.tscn" id="6_1r1qg"]
 [ext_resource type="FontFile" uid="uid://8y2n675v81fv" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="7_4jlog"]
+[ext_resource type="Texture2D" uid="uid://ngjjlc782tyo" path="res://assets/sprites/full_heart.png" id="10_7w1y7"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0v7xs"]
 texture = ExtResource("2_unj8r")
@@ -494,6 +496,13 @@ _data = {
 
 [node name="Game" type="Node2D"]
 
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, 4)
+zoom = Vector2(4, 4)
+limit_bottom = 60
+script = ExtResource("1_40tog")
+player_path = NodePath("../Player")
+
 [node name="GameManager" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("1_n23jo")
@@ -512,11 +521,7 @@ autowrap_mode = 2
 uppercase = true
 
 [node name="Player" parent="." instance=ExtResource("1_adcch")]
-
-[node name="Camera2D" type="Camera2D" parent="Player"]
-position = Vector2(0, 4)
-zoom = Vector2(4, 4)
-limit_bottom = 60
+unique_name_in_owner = true
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_hao3r")
@@ -660,3 +665,62 @@ theme_override_font_sizes/font_size = 8
 text = "Hello NIKAS!
 
 Collect all the coins."
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HealthUI" type="Node" parent="CanvasLayer"]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/HealthUI"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -154.0
+offset_top = 42.0
+offset_right = -50.0
+offset_bottom = 74.0
+grow_horizontal = 0
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/HealthUI/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("10_7w1y7")
+
+[node name="TextureRect2" type="TextureRect" parent="CanvasLayer/HealthUI/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("10_7w1y7")
+
+[node name="TextureRect3" type="TextureRect" parent="CanvasLayer/HealthUI/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("10_7w1y7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -68.0
+offset_top = -42.5
+offset_right = 68.0
+offset_bottom = 42.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+text = "Game Over"
+metadata/_edit_use_anchors_ = true
+
+[node name="Label2" type="Label" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+text = "Coins Collected: 0"
+metadata/_edit_use_anchors_ = true
+
+[node name="MenuButton" type="MenuButton" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+text = "Restart"
+metadata/_edit_use_anchors_ = true
